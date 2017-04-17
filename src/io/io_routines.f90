@@ -1098,6 +1098,61 @@ contains
     end subroutine  io_read_attribute_c
 
 
+    subroutine io_read_attributes(filename, attr_names, attr_vals, var_name, fill_val, error)
+        implicit none
+        character(len=*), intent(in)                           :: filename
+        character(len=MAXVARLENGTH), allocatable, dimension(:) :: attr_names
+        character(len=MAXVARLENGTH), allocatable, dimension(:) :: attr_vals
+        character(len=*), intent(in), optional                 :: var_name
+        real,             intent(out), optional                :: fill_val
+        integer,          intent(out), optional                :: error
+
+        integer :: ncid, varid, natts, attnum, xtype
+        character(len=NF90_MAX_NAME) :: attname
+
+        ! open the netcdf file
+        call check(nf90_open(filename, NF90_NOWRITE, ncid),filename)
+
+        ! If a variable name was specified, get the varid of the variable
+        ! else search for a global attribute
+        if (present(var_name)) then
+            call check(nf90_inq_varid(ncid, var_name, varid),var_name)
+        else
+            varid=NF90_GLOBAL
+        endif
+
+        call check(nf90_inquire_variable(ncid_in, varid, natts=natts))
+
+        allocate(attr_names(natts), stat=Mem_Error)
+        if (Mem_Error /= 0) call memory_error(Mem_Error, "attr_names(natts)", [natts])
+        allocate(attr_vals(natts), stat=Mem_Error)
+        if (Mem_Error /= 0) call memory_error(Mem_Error, "attr_vals(natts)", [natts])
+
+        fill_val = options%mask_value
+
+        do attnum = 1, natts
+            call check(nf90_inq_attname(ncid, varid, attnum, attr_names(attnum)))
+            call check(nf90_inq_attname(ncid, varid, trim(attr_names(attnum)),
+                       xtype=xtype))
+
+            ! First look for some special attributes
+            if (trim(attr_names(attnum)) == 'missing_value') then
+                call check(nf90_get_att(ncid, varid, attname, fill_val))
+            else if (trim(attr_names(attnum)) == '_FillValue') then
+                call check(nf90_get_att(ncid, varid, attname, fill_val))
+            else
+                if (xtype == NF90_CHAR) then
+                    call check(nf90_get_att(ncid, varid, attr_names(attnum),
+                               attr_vals(attnum)))
+                else
+                    attr_names(attnum) = kNULL_CHAR
+                    attr_vals(attnum) = kNULL_CHAR
+            endif
+
+        call check(nf90_close(ncid), "closing:"//trim(filename))
+    end subroutine  io_read_attributes
+
+
     !>------------------------------------------------------------
     !! Write a real type attribute to a named file for an optional variable
     !!

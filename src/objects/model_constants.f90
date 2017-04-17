@@ -1,9 +1,31 @@
+#define STR_HELPER(x) # x
+#define STR(x) STR_HELPER(x)
+
 module model_constants
 
     implicit none
 
     ! Model source code version number
     character(len=*),public,parameter :: kVERSION_STRING = "0.4"
+    character(len=*),public,parameter :: kGIT_VERSION = GIT_VERSION
+    character(len=*),public,parameter :: kCOMP_USER = USERNAME
+    character(len=*),public,parameter :: kCOMP_HOST = HOSTNAME
+    character(len=*),public,parameter :: kCOMP_DATE = __DATE__
+    character(len=*),public,parameter :: kCOMP_TIME = __TIME__
+
+    ! Get compiler metadata */
+#if defined(__INTEL_COMPILER)
+    ! Intel
+    character(len=*),public,parameter :: kCOMP_COMPILER = "ifort"
+    character(len=*),public,parameter :: kCOMP_VERSION = __VERSION__
+#elif defined(__GNUC__) || defined(__GNUG__)
+    ! GNU
+    character(len=*),public,parameter :: kCOMP_COMPILER = "gfortran"
+    character(len=*),public,parameter :: kCOMP_VERSION = STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
+#else
+    character(len=*),public,parameter :: kCOMP_COMPILER = "unknown"
+    character(len=*),public,parameter :: kCOMP_VERSION = "unknown"
+#endif
 
     ! ------------------------------------------------
     ! String constants
@@ -67,6 +89,7 @@ module model_constants
     ! Other Constants
     ! ------------------------------------------------
     integer,public,parameter            :: kFILL_VALUE       = -9999
+    character(len=*),public,parameter   :: kNULL_CHAR = CHAR(0)
     character(len=*),public,parameter   :: kDEFAULT_OPTIONS_FILENAME = "downscale_options.txt"
     double precision, public, parameter :: kPI = 3.14159265358979323846264338327950288419716939937510582
 

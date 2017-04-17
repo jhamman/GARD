@@ -453,7 +453,7 @@ $(BUILD)string.o: utilities/string.f90 $(BUILD)model_constants.o
 
 # constants and data structures
 $(BUILD)model_constants.o: objects/model_constants.f90
-	$(FC) $(FCFLAGS) -c $< $(MODOUTPUT) -o $@
+	$(FC) $(FCFLAGS) ${PREPROC} -DGIT_VERSION=\"$(GIT_VERSION)\" -c $< $(MODOUTPUT) -o $@
 
 $(BUILD)data_structures.o: objects/data_structures.f90 $(BUILD)time.o $(BUILD)model_constants.o
 	$(FC) $(FCFLAGS) -c $< $(MODOUTPUT) -o $@

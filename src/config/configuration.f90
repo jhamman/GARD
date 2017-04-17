@@ -808,7 +808,12 @@ contains
         write(*,*) "Generalized Analog Regression Downscaling (GARD)"
         write(*,*) "-----------------------------------------------------------"
         write(*,*) "GARD Version : "//trim(kVERSION_STRING)
-        ! TODO: Add compile time options
+        write(*,*) " Git Version : "//trim(kGIT_VERSION)
+        write(*,*) " Compiled by : "trim(kCOMP_USER)
+        write(*,*) " Compiled on : "trim(kCOMP_DATE)//" "//trim(kCOMP_TIME)
+        write(*,*) "Compile Host : "trim(kCOMP_HOST)
+        ! write(*,*) "Compile Plat : "trim(kCOMP_PLAT)
+        write(*,*) "    Compiler : "//trim(kCOMP_COMPILER)//" version "//trim(kCOMP_VERSION)
         write(*,*) ""
         write(*,*) "  The Generalized Analog Regression Downscaling (GARD)"
         write(*,*) "  downscaling tool, version "//trim(kVERSION_STRING)//", Copyright (C) 2017 The"

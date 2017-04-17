@@ -51,6 +51,7 @@ module data_structures
     type interpolable_type
         ! all interpolables must have position (lat, lon).
         real, allocatable, dimension(:,:) :: lat,lon
+        logical :: coords_2d
 
         ! this is the look up table that describe how to interpolate horizontally (geolut)
         type(geo_look_up_table)::geolut
@@ -75,9 +76,9 @@ module data_structures
         character(len=MAXVARLENGTH)         :: name      ! name of the variable
         real, allocatable, dimension(:,:,:) :: data      ! raw data
         integer                             :: data_type ! Type of data.  e.g. precip, temperature, or other.
+        real                                :: fill_val  ! Fill value for data
         character(len=MAXVARLENGTH), allocatable, dimension(:) :: attributes_names
         character(len=MAXVARLENGTH), allocatable, dimension(:) :: attributes_values
-
         real, allocatable, dimension(:,:) :: min_val, mean, stddev ! per gridpoint mean and standard deviation (for normalization)
     end type variable_type
 

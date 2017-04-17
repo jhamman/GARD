@@ -78,7 +78,7 @@ contains
                 ! then compute grid mean and stddev statistics for re-normalization
                 ! could also add a standard normal transformation?
                 if (var_idx == options%mask_variable) then
-                    call create_variable_mask(obs_data%mask, var%data, options%mask_value)
+                    call create_variable_mask(obs_data%mask, var%data, var%fill_val)
                 endif
 
                 where( var%data > 1e10 ) var%data = 1
@@ -165,8 +165,19 @@ contains
         allocate(output%data(dims(1), dims(2), dims(3)))
 
         call load_data(varname, filenames, output%data)
+        call load_attributes(varname, filenames(1), output)
 
     end function read_obs_variable
+
+    subroutine load_attributes(varname, filename, output)
+        implicit none
+        character(len=MAXVARLENGTH),    intent(in) :: varname
+        character(len=MAXFILELENGTH),   intent(in) :: filenames
+        type(obs_variable_type), intent(inout) :: output
+
+
+
+    end subroutine
 
     !! requires all filenames to have the same number of time steps... no good for monthly files...
     function get_dims(varname, filenames) result(dims)
